@@ -1,0 +1,6 @@
+name = Dropbox
+description = Allow roking with Dropbox API
+core = 7.x
+version = "7.x-0.1"
+project = "Custom Modules"
+configure = admin/config/services/dropbox/settings

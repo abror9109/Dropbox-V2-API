@@ -1,0 +1,87 @@
+<?php
+
+module_load_include('php', 'dropbox_v2_api', 'extra/settings');
+module_load_include('php', 'dropbox_v2_api', 'extra/functions');
+
+/*
+ _dropbox_space_usage
+ _dropbox_current_account
+ _dropbox_upload
+ _dropbox_create_folder
+ _dropbox_delete
+ _dropbox_delete_multiple
+ _dropbox_delete_status
+ _dropbox_list_folder
+ _dropbox_list_folder_next
+ _dropbox_get_last_page_cursor
+ _dropbox_is_connected
+
+*/
+
+ /*
+  - copy
+   - check internet connection
+    - check ulanganmi yomi dropboxga
+ */
+
+function dropbox_v2_api_menu() {
+	$items = array();
+	$items['dropbox/authorize'] = array(
+		'title' => 'Dropbox Client for Drupal',
+		'page callback' => 'dropbox_auth_success',
+		'access callback' => 'user_is_logged_in',
+	);
+	$items['dropbox/disconnect'] = array(
+		'title' => 'Dropbox Client for Drupal',
+		'page callback' => 'dropbox_disconnect',
+		'access callback' => 'user_is_logged_in',
+	);
+	$items['admin/config/services/dropbox/settings'] = array(
+	    'title' => 'DropBox Settings',
+	    'page callback' => 'drupal_get_form',
+	    'page arguments' => array( 'dropbox_settings' ),
+	    'access arguments' => array( 'administer site configuration' ),
+    );
+	return $items;
+}
+
+function dropbox_auth_success() {
+	global $base_url;
+	global $user;
+
+	$url = 'https://api.dropboxapi.com/oauth2/token';
+	$data = array(
+		'code' => $_GET['code'],
+		'grant_type' => 'authorization_code',
+		'client_id' => variable_get('dropbox_app_key', ''),
+		'client_secret' => variable_get('dropbox_app_secret', ''),
+		'redirect_uri' => $base_url . '/dropbox/authorize',
+	);
+	$resp = _dropbox_curl($url, $data);
+	$resp_array = json_decode($resp);
+
+	if(isset($resp_array->access_token) && isset($resp_array->token_type) && isset($resp_array->uid) && isset($resp_array->account_id)) {
+		variable_set('dropbox_access_token', $resp_array->access_token);
+		variable_set('dropbox_token_type', $resp_array->token_type);
+		variable_set('dropbox_account_id', $resp_array->account_id);
+		variable_set('dropbox_uid', $resp_array->uid);
+
+		drupal_set_message("Successfully authorized.");
+	} else {
+		drupal_set_message("Authorization failed. Please check your dropbox settings and try again.", 'error');
+	}
+	drupal_goto("admin/config/services/dropbox/settings");
+}
+
+function dropbox_disconnect() {
+	variable_set('dropbox_access_token', "");
+	variable_set('dropbox_token_type', "");
+	variable_set('dropbox_account_id', "");
+	variable_set('dropbox_uid', "");
+	drupal_goto("admin/config/services/dropbox/settings");
+}
+
+function dropbox_v2_api_init() {
+	//
+
+}
