@@ -1,17 +1,17 @@
 # Dropbox-V2-API
 Drupal module for Dropbox V2 API
-This module allow Drupal users to work with the Dropbox new V2 API. Module uses Dropbox for HTTP.
-Module allows to enable single dropbox account for all users.
+This module allows Drupal users to work with the Dropbox new V2 API. The module uses Dropbox for HTTP.
+The module allows enabling a single dropbox account for all users.
 
 Installation
-In order to start working, you have to Create an App in Dropbox. Get App key and App secret for your Dropbox App.
+In order to start working, you have to create an App in Dropbox. Get the App key and App secret for your Dropbox App.
 1. Enable the module
 2. Go to www.example.com/admin/config/services/dropbox/settings
-3. Enter App key and App secret.
+3. Enter the App key and App secret.
 4. Save and authorize your app. That's it.
 
 Usage
-You can use the useful functions to interact your site with Dropbox.
+You can use the useful functions to interact with your site with Dropbox.
 Here is the list of functions you can use:
 * _dropbox_space_usage - get the space usage
 * _dropbox_current_account - get the current account info
